@@ -1,4 +1,4 @@
-import { findCompaniesByCity, CompanyResult } from "./company.repository";
+import { findNearByCompaniesByCity, CompanyResult } from "./company.repository";
 
 type CompanyResultOmitId = Omit<CompanyResult, "id">[];
 
@@ -7,7 +7,7 @@ export async function getCompaniesByCity(city: string): Promise<CompanyResultOmi
         throw new Error("City is required");
     }
 
-    const companies = await findCompaniesByCity(city);
+    const companies = await findNearByCompaniesByCity(city);
 
     return companies.map((c) => ({
         companyName  : c.companyName,
