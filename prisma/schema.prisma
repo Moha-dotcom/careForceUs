@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                String            @id @default(uuid()) @map("id")
+  companyName       String            @map("company_name")
+  streetAddress     String            @map("street_address")
+  city              String            @map("city")
+  state             String            @map("state") @db.Char(2)
+  zipCode           String            @map("zip_code") @db.Char(5)
+  phone             String            @map("phone")
+  licenseType       String?           @map("license_type")
+  favoriteCompanies FavoriteCompany[]
+
+  @@map("companies")
+}
+
+model User {
+  id        String            @id @default(uuid()) @map("id")
+  username  String            @unique @map("username")
+  email     String            @unique @map("email")
+  password  String            @map("password")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  favorites FavoriteCompany[]
+
+  @@map("users")
+}
+
+enum TagStatus {
+  CALLED
+  ANSWERED
+  CALL_BACK
+  NO_OPEN_POSITION
+  POSITION_AVAILABLE
+  INTERVIEW
+  PENDING_HIRE
+  MAYBE_CALL_TOMORROW
+  CALLING
+}
+
+model FavoriteCompany {
+  id        String    @id @default(uuid()) @map("id")
+  companyId String    @map("company_id")
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tag       TagStatus @default(CALLING)
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@map("favorite_companies")
+}
