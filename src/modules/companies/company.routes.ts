@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { getCompaniesByCityHandler } from "./company.controller";
+import { getCompaniesHandler } from "./company.controller";
 
 const router = Router();
 
-router.get("/", getCompaniesByCityHandler);
+router.get("/", getCompaniesHandler);
 
 export default router;

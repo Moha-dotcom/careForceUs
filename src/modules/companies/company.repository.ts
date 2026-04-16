@@ -11,15 +11,14 @@ export type CompanyResult = {
     licenseType  : string | null;
 };
 
-export async function findNearByCompaniesByCity(city: string): Promise<CompanyResult[]> {
+export async function findCompaniesByFilters(filters: {
+    city?   : string;
+    zipCode?: string;
+}): Promise<CompanyResult[]> {
     return prisma.company.findMany({
-        where: { city },
+        where: {
+            ...(filters.city    && { city    : filters.city }),
+            ...(filters.zipCode && { zipCode : filters.zipCode }),
+        },
     });
-}
-
-
-export async function findNearByCompaniesByZipcode(zipCode: string): Promise<CompanyResult[]> {
-    return prisma.company.findMany({
-        where: { zipCode },
-    })
 }

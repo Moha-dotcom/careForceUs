@@ -1,21 +1,24 @@
 import { Request, Response, NextFunction } from "express";
-import { getCompaniesByCity } from "./company.service";
+import { getCompaniesByFilters } from "./company.service";
 
-export async function getCompaniesByCityHandler(
+export async function getCompaniesHandler(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
-    if (typeof req.query.city !== "string") {
+    const city    = typeof req.query.city    === "string" ? req.query.city    : undefined;
+    const zipCode = typeof req.query.zipCode === "string" ? req.query.zipCode : undefined;
+
+    if (!city && !zipCode) {
         res.status(400).json({
-            status: "error",
-            message: "city query parameter is required",
+            status : "error",
+            message: "At least one filter (city or zipCode) is required",
         });
         return;
     }
 
     try {
-        const data = await getCompaniesByCity(req.query.city);
+        const data = await getCompaniesByFilters({ city, zipCode });
         res.status(200).json({ status: "success", data });
     } catch (err) {
         next(err);

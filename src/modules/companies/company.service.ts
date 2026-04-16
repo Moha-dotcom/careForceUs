@@ -1,13 +1,16 @@
-import { findNearByCompaniesByCity, CompanyResult } from "./company.repository";
+import { findCompaniesByFilters, CompanyResult } from "./company.repository";
 
 type CompanyResultOmitId = Omit<CompanyResult, "id">[];
 
-export async function getCompaniesByCity(city: string): Promise<CompanyResultOmitId> {
-    if (!city || city.trim().length === 0) {
-        throw new Error("City is required");
+export async function getCompaniesByFilters(filters: {
+    city?   : string;
+    zipCode?: string;
+}): Promise<CompanyResultOmitId> {
+    if (!filters.city && !filters.zipCode) {
+        throw new Error("At least one filter (city or zipCode) is required");
     }
 
-    const companies = await findNearByCompaniesByCity(city);
+    const companies = await findCompaniesByFilters(filters);
 
     return companies.map((c) => ({
         companyName  : c.companyName,
